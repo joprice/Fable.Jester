@@ -50,6 +50,7 @@ group RTL
     nuget Fable.Promise ~> 3
     nuget Feliz ~> 2
     nuget FSharp.Core >= 4.7.2 lowest_matching: true
+    nuget Fable.React.Types
 
 group RTL.Tests
 	source https://nuget.org/api/v2
