@@ -28,7 +28,7 @@ group Jest
     nuget Fable.Core ~> 4
     nuget Fable.Node ~> 1
     nuget Fable.Promise ~> 3
-    nuget Feliz ~> 1
+    nuget Feliz ~> 2
     nuget FSharp.Core >= 4.7.2 lowest_matching: true
 
 group Jest.Tests
@@ -38,7 +38,7 @@ group Jest.Tests
     nuget Fable.Browser.Dom ~> 2
     nuget Fable.Core ~> 4
     nuget Fable.Promise ~> 3
-    nuget Feliz ~> 1
+    nuget Feliz ~> 2
     nuget FSharp.Core >= 4.7.2 lowest_matching: true
 
 group RTL
@@ -48,7 +48,7 @@ group RTL
     nuget Fable.Browser.Event ~> 1
     nuget Fable.Core ~> 4
     nuget Fable.Promise ~> 3
-    nuget Feliz ~> 1
+    nuget Feliz ~> 2
     nuget FSharp.Core >= 4.7.2 lowest_matching: true
 
 group RTL.Tests
@@ -59,7 +59,7 @@ group RTL.Tests
     nuget Fable.Browser.Event ~> 1
     nuget Fable.Core ~> 4
     nuget Fable.Promise ~> 3
-    nuget Feliz ~> 1
+    nuget Feliz ~> 2
     nuget FSharp.Core >= 4.7.2 lowest_matching: true
 
 group Tooling

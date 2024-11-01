@@ -209,9 +209,9 @@ type messageEvent =
     static member origin (value: string) = Interop.mkClipboardEventAttr "origin" value
     static member lastEventId (value: string) = Interop.mkClipboardEventAttr "lastEventId" value
     static member source (value: Window) = Interop.mkClipboardEventAttr "source" value
-    static member source (value: Worker) = Interop.mkClipboardEventAttr "source" value
-    static member source (value: AbstractWorker) = Interop.mkClipboardEventAttr "source" value
-    static member ports (value: Worker) = Interop.mkClipboardEventAttr "ports" value
+    // static member source (value: Worker) = Interop.mkClipboardEventAttr "source" value
+    // static member source (value: AbstractWorker) = Interop.mkClipboardEventAttr "source" value
+    // static member ports (value: Worker) = Interop.mkClipboardEventAttr "ports" value
     
 type pageTransitionEvent =
     inherit event
