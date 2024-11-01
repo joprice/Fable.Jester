@@ -3,12 +3,12 @@
 open Browser.Types
 open Fable.Core
 open Fable.Core.JsInterop
-open Feliz
 open System
 open System.Text.RegularExpressions
 
 [<AutoOpen>]
 module Expect =
+    open Feliz
     /// The response structure of matcher extensions.
     type MatcherResponse = 
         { pass: bool

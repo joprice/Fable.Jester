@@ -3,7 +3,8 @@
 open Browser.Types
 open Fable.Core
 open Fable.Core.JsInterop
-open Feliz
+open Fable.React
+
 open System.Text.RegularExpressions
 
 type RTL =
