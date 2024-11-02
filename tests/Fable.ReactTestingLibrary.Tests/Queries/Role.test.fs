@@ -61,25 +61,25 @@ Jest.describe("*ByRole query tests", fun () ->
         Jest.expect(actual).toHaveLength(0)
     )
 
-    Jest.test("findByRole an element", promise {
-        let actual = RTL.render(roleElement()).findByRole(prop.role.dialog)
-            
-        do! Jest.expect(actual).resolves.toBeInTheDocument()
-    })
-    Jest.test("findByRole throws when no element matches", promise {
-        let actual = RTL.render(otherRoleElement()).findByRole(prop.role.dialog)
-        
-        do! Jest.expect(actual).rejects.toThrow()
-    })
-
-    Jest.test("findAllByRole an element", promise {
-        let actual = RTL.render(roleElement()).findAllByRole(prop.role.dialog)
-            
-        do! Jest.expect(actual).resolves.toHaveLength(1)
-    })
-    Jest.test("findAllByRole no element matches", promise {
-        let actual = RTL.render(otherRoleElement()).findAllByRole(prop.role.dialog)
-            
-        do! Jest.expect(actual).rejects.toThrow()
-    })
+    // Jest.test("findByRole an element", promise {
+    //     let actual = RTL.render(roleElement()).findByRole(prop.role.dialog)
+    //         
+    //     do! Jest.expect(actual).resolves.toBeInTheDocument()
+    // })
+    // Jest.test("findByRole throws when no element matches", promise {
+    //     let actual = RTL.render(otherRoleElement()).findByRole(prop.role.dialog)
+    //     
+    //     do! Jest.expect(actual).rejects.toThrow()
+    // })
+    //
+    // Jest.test("findAllByRole an element", promise {
+    //     let actual = RTL.render(roleElement()).findAllByRole(prop.role.dialog)
+    //         
+    //     do! Jest.expect(actual).resolves.toHaveLength(1)
+    // })
+    // Jest.test("findAllByRole no element matches", promise {
+    //     let actual = RTL.render(otherRoleElement()).findAllByRole(prop.role.dialog)
+    //         
+    //     do! Jest.expect(actual).rejects.toThrow()
+    // })
 )

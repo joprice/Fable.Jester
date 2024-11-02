@@ -10,21 +10,22 @@ open System.Text.RegularExpressions
 type RTL =
     /// This is a light wrapper around the react-dom/test-utils act function. 
     /// All it does is forward all arguments to the act function if your version of react supports act.
-    static member act (callback: unit -> unit) = Bindings.act callback
+    static member inline act (callback: unit -> unit) = Bindings.act callback
+    static member inline act (callback: unit -> JS.Promise<unit> ): JS.Promise<unit> = Bindings.actAsync callback
 
     /// Unmounts React trees that were mounted with render.
-    static member cleanup () = Bindings.cleanup()
+    static member inline cleanup () = Bindings.cleanup()
 
     /// Set the configuration options.
-    static member configure (options: IConfigureOption list) = 
+    static member inline configure (options: IConfigureOption list) = 
         Bindings.configure(unbox<IConfigureOptions> (createObj !!options))
 
     /// Fires a DOM event.
-    static member fireEvent (element: #HTMLElement, event: #Browser.Types.Event) = 
+    static member inline fireEvent (element: #HTMLElement, event: #Browser.Types.Event) = 
         Bindings.fireEvent.custom(element, event)
 
     /// Gets the text of the element.
-    static member getNodeText (element: #HTMLElement) =
+    static member inline getNodeText (element: #HTMLElement) =
         Bindings.getNodeText element
 
     /// Allows iteration over the implicit ARIA roles represented 
@@ -32,7 +33,7 @@ type RTL =
     ///
     /// It returns an object, indexed by role name, with each value being an 
     /// array of elements which have that implicit ARIA role.
-    static member getRoles (element: #HTMLElement) =
+    static member inline getRoles (element: #HTMLElement) =
         Bindings.getRoles element
 
     /// Compute if the given element should be excluded from the accessibility API by the browser. 
@@ -112,19 +113,19 @@ type RTL =
     static member screen = Bindings.screenQueriesForElement(Bindings.screenImport)
 
     /// When in need to wait for any period of time you can use waitFor, to wait for your expectations to pass.
-    static member waitFor (callback: unit -> unit) = Bindings.waitForImport.invoke callback
+    static member inline waitFor (callback: unit -> unit) = Bindings.waitForImport.invoke callback
     /// When in need to wait for any period of time you can use waitFor, to wait for your expectations to pass.
-    static member waitFor (callback: unit -> unit, waitForOptions: IWaitOption list) = 
+    static member inline waitFor (callback: unit -> unit, waitForOptions: IWaitOption list) = 
         Bindings.waitForImport.invoke(callback, unbox<IWaitOptions> (createObj !!waitForOptions))
     /// When in need to wait for any period of time you can use waitFor, to wait for your expectations to pass.
-    static member waitFor (promise: JS.Promise<unit>) = Bindings.waitForImport.invoke (fun () -> promise)
+    static member inline waitFor (promise: JS.Promise<unit>) = Bindings.waitForImport.invoke (fun () -> promise)
     /// When in need to wait for any period of time you can use waitFor, to wait for your expectations to pass.
-    static member waitFor (promise: JS.Promise<unit>, waitForOptions: IWaitOption list) = 
+    static member inline waitFor (promise: JS.Promise<unit>, waitForOptions: IWaitOption list) = 
         Bindings.waitForImport.invoke((fun () -> promise), unbox<IWaitOptions> (createObj !!waitForOptions))
     /// When in need to wait for any period of time you can use waitFor, to wait for your expectations to pass.
-    static member waitFor (promise: Async<unit>) = RTL.waitFor(Async.StartAsPromise promise)
+    static member inline waitFor (promise: Async<unit>) = RTL.waitFor(Async.StartAsPromise promise)
     /// When in need to wait for any period of time you can use waitFor, to wait for your expectations to pass.
-    static member waitFor (promise: Async<unit>, waitForOptions: IWaitOption list) = RTL.waitFor(Async.StartAsPromise promise, waitForOptions)
+    static member inline waitFor (promise: Async<unit>, waitForOptions: IWaitOption list) = RTL.waitFor(Async.StartAsPromise promise, waitForOptions)
         
     /// Wait for the removal of an element from the DOM.
     static member waitForElementToBeRemoved (callback: unit -> #HTMLElement option) = 
@@ -576,150 +577,150 @@ module RTL =
         static member wheel (element: #HTMLElement, ?eventProperties: #IMouseEventProperty list) = Bindings.fireEvent.wheel(element, ?eventProperties = (eventProperties |> Option.map (fun props -> createObj !!props)))
 
     /// Convenience methods for using fireEvent.
-    type userEvent =
-        /// Selects the text inside an input or textarea and deletes it.
-        static member clear (element: #HTMLElement) = Bindings.userEvent.clear(element)
-        /// Clicks element, depending on what element is it can have different side effects.
-        static member click (element: #HTMLElement, ?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
-            let eventInit = (eventProperties |> Option.map (fun props -> createObj !!props))
-            let options = Bindings.createClickOptions clickCount skipHover
-
-            Bindings.userEvent.click(element, ?eventInit = eventInit, ?options = options)
-        /// Cntrl + clicks element, depending on what element is it can have different side effects.
-        static member ctrlClick (element: #HTMLElement, ?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) = 
-            let eventInit = createObj !!(Option.defaultValue [] eventProperties @ (unbox [ mouseEvent.ctrlKey true ]))
-            let options = Bindings.createClickOptions clickCount skipHover
-
-            Bindings.userEvent.click(element, eventInit, ?options = options)
-        /// Clicks element twice, depending on what element is it can have different side effects.
-        static member dblClick (element: #HTMLElement, ?eventProperties: #IMouseEventProperty list) = 
-            Bindings.userEvent.dblClick(element, ?eventInit = (eventProperties |> Option.map (fun props -> createObj !!props)))
-        /// Hovers over an element.
-        static member hover (element: #HTMLElement) = Bindings.userEvent.hover(element)
-        /// Simulates the keyboard events described by text. 
-        ///
-        /// This is similar to userEvent.type', but without any clicking or changing the selection range.
-        ///
-        /// You should use userEvent.keyboard if you want to just simulate pressing buttons on the keyboard. 
-        ///
-        /// You should use userEvent.type if you just want to conveniently insert some text into an input field or textarea.
-        ///
-        /// The brackets { and [ are used as special characters and can be referenced by doubling them.
-        static member keyboardWithState (text: string, ?document: Document, ?keyboardMap: KeyboardKey list, ?keyboardState: KeyboardState) =
-            Bindings.userEvent.keyboard (
-                text, 
-                ?options = Bindings.createKeyboardOptions document None (keyboardMap |> Option.map (List.map (fun k -> k.Convert()))) keyboardState
-            )
-        /// Simulates the keyboard events described by text. 
-        ///
-        /// This is similar to userEvent.type', but without any clicking or changing the selection range.
-        ///
-        /// You should use userEvent.keyboard if you want to just simulate pressing buttons on the keyboard. 
-        ///
-        /// You should use userEvent.type if you just want to conveniently insert some text into an input field or textarea.
-        ///
-        /// The brackets { and [ are used as special characters and can be referenced by doubling them.
-        static member keyboardWithState (text: string, delayMS: int, ?document: Document, ?keyboardMap: KeyboardKey list, ?keyboardState: KeyboardState) =
-            Bindings.userEvent.keyboard (
-                text, 
-                ?options = Bindings.createKeyboardOptions document (Some delayMS) (keyboardMap |> Option.map (List.map (fun k -> k.Convert()))) keyboardState
-            )
-            |> unbox<JS.Promise<KeyboardState>>
-        /// Simulates the keyboard events described by text. 
-        ///
-        /// This is similar to userEvent.type', but without any clicking or changing the selection range.
-        ///
-        /// You should use userEvent.keyboard if you want to just simulate pressing buttons on the keyboard. 
-        ///
-        /// You should use userEvent.type if you just want to conveniently insert some text into an input field or textarea.
-        ///
-        /// The brackets { and [ are used as special characters and can be referenced by doubling them.
-        static member inline keyboard (text: string, ?document: Document, ?keyboardMap: KeyboardKey list, ?keyboardState: KeyboardState) = 
-            userEvent.keyboardWithState(text, ?document = document, ?keyboardMap = keyboardMap, ?keyboardState = keyboardState) |> ignore
-        /// Simulates the keyboard events described by text. 
-        ///
-        /// This is similar to userEvent.type', but without any clicking or changing the selection range.
-        ///
-        /// You should use userEvent.keyboard if you want to just simulate pressing buttons on the keyboard. 
-        ///
-        /// You should use userEvent.type if you just want to conveniently insert some text into an input field or textarea.
-        ///
-        /// The brackets { and [ are used as special characters and can be referenced by doubling them.
-        static member inline keyboard (text: string, delayMS: int, ?document: Document, ?keyboardMap: KeyboardKey list, ?keyboardState: KeyboardState) = 
-            promise {
-                let! res = userEvent.keyboardWithState(text, delayMS, ?document = document, ?keyboardMap = keyboardMap, ?keyboardState = keyboardState)
-
-                return ()
-            }
-        /// Selects the specified option(s) of a <select> or a <select multiple> element.
-        static member selectOptions (element: #HTMLElement, values: 'T []) = Bindings.userEvent.selectOptions(element, values)
-        /// Selects the specified option(s) of a <select> or a <select multiple> element.
-        static member selectOptions (element: #HTMLElement, values: 'T list) = Bindings.userEvent.selectOptions(element, values)
-        /// Selects the specified option(s) of a <select> or a <select multiple> element.
-        static member selectOptions (element: #HTMLElement, values: ResizeArray<'T>) = Bindings.userEvent.selectOptions(element, values)
-        /// Remove the selection for the specified option(s) of a <select multiple> element.
-        static member deselectOptions (element: #HTMLElement, values: 'T []) : unit = Bindings.userEvent.deselectOptions(element, values)
-        /// Remove the selection for the specified option(s) of a <select multiple> element.
-        static member deselectOptions (element: #HTMLElement, values: 'T list) : unit = Bindings.userEvent.deselectOptions(element, values)
-        /// Remove the selection for the specified option(s) of a <select multiple> element.
-        static member deselectOptions (element: #HTMLElement, values: ResizeArray<'T>) : unit = Bindings.userEvent.deselectOptions(element, values)
-        /// Shift + clicks element, depending on what element is it can have different side effects.
-        static member shiftClick (element: #HTMLElement, ?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
-            let eventInit = createObj !!(Option.defaultValue [] eventProperties @ (unbox [ mouseEvent.shiftKey true ]))
-            let options = Bindings.createClickOptions clickCount skipHover
-
-            Bindings.userEvent.click(element, eventInit, ?options = options)
-        /// Cntrl + shift + clicks element, depending on what element is it can have different side effects.
-        static member shiftCtrlClick (element: #HTMLElement, ?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
-            let eventInit = createObj !!(Option.defaultValue [] eventProperties @ (unbox [ mouseEvent.shiftKey true; mouseEvent.ctrlKey true ]))
-            let options = Bindings.createClickOptions clickCount skipHover
-
-            Bindings.userEvent.click(element, eventInit, ?options = options)
-        /// Fires a tab event changing the document.activeElement in the same way the browser does.
-        static member tab (?shift: bool, ?focusTrap: #HTMLElement) = Bindings.userEvent.tab(?options = Bindings.createTabOptions shift focusTrap)
-        /// Writes text inside an <input> or a <textarea>.
-        ///
-        /// You can use special characters via brackets such as {enter}, supported keys:
-        /// enter, esc, backspace, shift, ctrl, alt, meta
-        ///
-        /// shift, ctrl, alt, and meta will activate their respective event key. Which is 
-        /// ended with a closing tag: {/shift}, {/ctrl}, {/alt}, and {/meta}.
-        ///
-        /// shift does *not* cause lowercase text to become uppercase.
-        static member type' (element: #HTMLElement, text: string, ?skipClick: bool, ?skipAutoClose: bool, ?initialSelectionStart: int, ?initialSelectionEnd: int) = 
-            Bindings.userEvent.typeInternal(element, text, Bindings.createTypeOptions skipClick skipAutoClose None initialSelectionStart initialSelectionEnd)
-        /// Writes text inside an <input> or a <textarea>.
-        ///
-        /// You can use special characters via brackets such as {enter}, supported keys:
-        /// enter, esc, backspace, shift, ctrl, alt, meta
-        ///
-        /// shift, ctrl, alt, and meta will activate their respective event key. Which is 
-        /// ended with a closing tag: {/shift}, {/ctrl}, {/alt}, and {/meta}.
-        ///
-        /// shift does *not* cause lowercase text to become uppercase.
-        static member type' (element: #HTMLElement, text: string, delayMS: int, ?skipClick: bool, ?skipAutoClose: bool, ?initialSelectionStart: int, ?initialSelectionEnd: int) = 
-            Bindings.userEvent.typeInternal(element, text, Bindings.createTypeOptions skipClick skipAutoClose (Some delayMS) initialSelectionStart initialSelectionEnd)
-            |> unbox<JS.Promise<unit>>
-        /// Unhovers an element.
-        static member unhover (element: #HTMLElement) = Bindings.userEvent.unhover(element)
-        /// Uploads a file to an <input>. 
-        static member upload (element: #HTMLElement, file: File, ?clickEventProps: #IMouseEventProperty list, ?changeEventProps: #IEventProperty list, ?applyAccept: bool) =
-            Bindings.userEvent.upload (
-                element, 
-                file, 
-                ?eventOptions = Bindings.createUploadEventInit clickEventProps changeEventProps, 
-                ?options = Option.map (fun b -> createObj !![ "applyAccept" ==> b ]) applyAccept
-            )
-        /// Uploads a file to an <input>. 
-        ///
-        /// For uploading multiple files use <input> with the multiple attribute.
-        static member upload (element: #HTMLElement, files: seq<File>, ?clickEventProps: #IMouseEventProperty list, ?changeEventProps: #IEventProperty list, ?applyAccept: bool) =
-            Bindings.userEvent.upload (
-                element, 
-                ResizeArray files, 
-                ?eventOptions = Bindings.createUploadEventInit clickEventProps changeEventProps, 
-                ?options = Option.map (fun b -> createObj !![ "applyAccept" ==> b ]) applyAccept
-            )
+    // type userEvent =
+    //     /// Selects the text inside an input or textarea and deletes it.
+    //     static member clear (element: #HTMLElement) = Bindings.userEvent.clear(element)
+    //     /// Clicks element, depending on what element is it can have different side effects.
+    //     static member click (element: #HTMLElement, ?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
+    //         let eventInit = (eventProperties |> Option.map (fun props -> createObj !!props))
+    //         let options = Bindings.createClickOptions clickCount skipHover
+    //
+    //         Bindings.userEvent.click(element, ?eventInit = eventInit, ?options = options)
+    //     /// Cntrl + clicks element, depending on what element is it can have different side effects.
+    //     static member ctrlClick (element: #HTMLElement, ?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) = 
+    //         let eventInit = createObj !!(Option.defaultValue [] eventProperties @ (unbox [ mouseEvent.ctrlKey true ]))
+    //         let options = Bindings.createClickOptions clickCount skipHover
+    //
+    //         Bindings.userEvent.click(element, eventInit, ?options = options)
+    //     /// Clicks element twice, depending on what element is it can have different side effects.
+    //     static member dblClick (element: #HTMLElement, ?eventProperties: #IMouseEventProperty list) = 
+    //         Bindings.userEvent.dblClick(element, ?eventInit = (eventProperties |> Option.map (fun props -> createObj !!props)))
+    //     /// Hovers over an element.
+    //     static member hover (element: #HTMLElement) = Bindings.userEvent.hover(element)
+    //     /// Simulates the keyboard events described by text. 
+    //     ///
+    //     /// This is similar to userEvent.type', but without any clicking or changing the selection range.
+    //     ///
+    //     /// You should use userEvent.keyboard if you want to just simulate pressing buttons on the keyboard. 
+    //     ///
+    //     /// You should use userEvent.type if you just want to conveniently insert some text into an input field or textarea.
+    //     ///
+    //     /// The brackets { and [ are used as special characters and can be referenced by doubling them.
+    //     static member keyboardWithState (text: string, ?document: Document, ?keyboardMap: KeyboardKey list, ?keyboardState: KeyboardState) =
+    //         Bindings.userEvent.keyboard (
+    //             text, 
+    //             ?options = Bindings.createKeyboardOptions document None (keyboardMap |> Option.map (List.map (fun k -> k.Convert()))) keyboardState
+    //         )
+    //     /// Simulates the keyboard events described by text. 
+    //     ///
+    //     /// This is similar to userEvent.type', but without any clicking or changing the selection range.
+    //     ///
+    //     /// You should use userEvent.keyboard if you want to just simulate pressing buttons on the keyboard. 
+    //     ///
+    //     /// You should use userEvent.type if you just want to conveniently insert some text into an input field or textarea.
+    //     ///
+    //     /// The brackets { and [ are used as special characters and can be referenced by doubling them.
+    //     static member keyboardWithState (text: string, delayMS: int, ?document: Document, ?keyboardMap: KeyboardKey list, ?keyboardState: KeyboardState) =
+    //         Bindings.userEvent.keyboard (
+    //             text, 
+    //             ?options = Bindings.createKeyboardOptions document (Some delayMS) (keyboardMap |> Option.map (List.map (fun k -> k.Convert()))) keyboardState
+    //         )
+    //         |> unbox<JS.Promise<KeyboardState>>
+    //     /// Simulates the keyboard events described by text. 
+    //     ///
+    //     /// This is similar to userEvent.type', but without any clicking or changing the selection range.
+    //     ///
+    //     /// You should use userEvent.keyboard if you want to just simulate pressing buttons on the keyboard. 
+    //     ///
+    //     /// You should use userEvent.type if you just want to conveniently insert some text into an input field or textarea.
+    //     ///
+    //     /// The brackets { and [ are used as special characters and can be referenced by doubling them.
+    //     static member inline keyboard (text: string, ?document: Document, ?keyboardMap: KeyboardKey list, ?keyboardState: KeyboardState) = 
+    //         userEvent.keyboardWithState(text, ?document = document, ?keyboardMap = keyboardMap, ?keyboardState = keyboardState) |> ignore
+    //     /// Simulates the keyboard events described by text. 
+    //     ///
+    //     /// This is similar to userEvent.type', but without any clicking or changing the selection range.
+    //     ///
+    //     /// You should use userEvent.keyboard if you want to just simulate pressing buttons on the keyboard. 
+    //     ///
+    //     /// You should use userEvent.type if you just want to conveniently insert some text into an input field or textarea.
+    //     ///
+    //     /// The brackets { and [ are used as special characters and can be referenced by doubling them.
+    //     static member inline keyboard (text: string, delayMS: int, ?document: Document, ?keyboardMap: KeyboardKey list, ?keyboardState: KeyboardState) = 
+    //         promise {
+    //             let! res = userEvent.keyboardWithState(text, delayMS, ?document = document, ?keyboardMap = keyboardMap, ?keyboardState = keyboardState)
+    //
+    //             return ()
+    //         }
+    //     /// Selects the specified option(s) of a <select> or a <select multiple> element.
+    //     static member selectOptions (element: #HTMLElement, values: 'T []) = Bindings.userEvent.selectOptions(element, values)
+    //     /// Selects the specified option(s) of a <select> or a <select multiple> element.
+    //     static member selectOptions (element: #HTMLElement, values: 'T list) = Bindings.userEvent.selectOptions(element, values)
+    //     /// Selects the specified option(s) of a <select> or a <select multiple> element.
+    //     static member selectOptions (element: #HTMLElement, values: ResizeArray<'T>) = Bindings.userEvent.selectOptions(element, values)
+    //     /// Remove the selection for the specified option(s) of a <select multiple> element.
+    //     static member deselectOptions (element: #HTMLElement, values: 'T []) : unit = Bindings.userEvent.deselectOptions(element, values)
+    //     /// Remove the selection for the specified option(s) of a <select multiple> element.
+    //     static member deselectOptions (element: #HTMLElement, values: 'T list) : unit = Bindings.userEvent.deselectOptions(element, values)
+    //     /// Remove the selection for the specified option(s) of a <select multiple> element.
+    //     static member deselectOptions (element: #HTMLElement, values: ResizeArray<'T>) : unit = Bindings.userEvent.deselectOptions(element, values)
+    //     /// Shift + clicks element, depending on what element is it can have different side effects.
+    //     static member shiftClick (element: #HTMLElement, ?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
+    //         let eventInit = createObj !!(Option.defaultValue [] eventProperties @ (unbox [ mouseEvent.shiftKey true ]))
+    //         let options = Bindings.createClickOptions clickCount skipHover
+    //
+    //         Bindings.userEvent.click(element, eventInit, ?options = options)
+    //     /// Cntrl + shift + clicks element, depending on what element is it can have different side effects.
+    //     static member shiftCtrlClick (element: #HTMLElement, ?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
+    //         let eventInit = createObj !!(Option.defaultValue [] eventProperties @ (unbox [ mouseEvent.shiftKey true; mouseEvent.ctrlKey true ]))
+    //         let options = Bindings.createClickOptions clickCount skipHover
+    //
+    //         Bindings.userEvent.click(element, eventInit, ?options = options)
+    //     /// Fires a tab event changing the document.activeElement in the same way the browser does.
+    //     static member tab (?shift: bool, ?focusTrap: #HTMLElement) = Bindings.userEvent.tab(?options = Bindings.createTabOptions shift focusTrap)
+    //     /// Writes text inside an <input> or a <textarea>.
+    //     ///
+    //     /// You can use special characters via brackets such as {enter}, supported keys:
+    //     /// enter, esc, backspace, shift, ctrl, alt, meta
+    //     ///
+    //     /// shift, ctrl, alt, and meta will activate their respective event key. Which is 
+    //     /// ended with a closing tag: {/shift}, {/ctrl}, {/alt}, and {/meta}.
+    //     ///
+    //     /// shift does *not* cause lowercase text to become uppercase.
+    //     static member type' (element: #HTMLElement, text: string, ?skipClick: bool, ?skipAutoClose: bool, ?initialSelectionStart: int, ?initialSelectionEnd: int) = 
+    //         Bindings.userEvent.typeInternal(element, text, Bindings.createTypeOptions skipClick skipAutoClose None initialSelectionStart initialSelectionEnd)
+    //     /// Writes text inside an <input> or a <textarea>.
+    //     ///
+    //     /// You can use special characters via brackets such as {enter}, supported keys:
+    //     /// enter, esc, backspace, shift, ctrl, alt, meta
+    //     ///
+    //     /// shift, ctrl, alt, and meta will activate their respective event key. Which is 
+    //     /// ended with a closing tag: {/shift}, {/ctrl}, {/alt}, and {/meta}.
+    //     ///
+    //     /// shift does *not* cause lowercase text to become uppercase.
+    //     static member type' (element: #HTMLElement, text: string, delayMS: int, ?skipClick: bool, ?skipAutoClose: bool, ?initialSelectionStart: int, ?initialSelectionEnd: int) = 
+    //         Bindings.userEvent.typeInternal(element, text, Bindings.createTypeOptions skipClick skipAutoClose (Some delayMS) initialSelectionStart initialSelectionEnd)
+    //         |> unbox<JS.Promise<unit>>
+    //     /// Unhovers an element.
+    //     static member unhover (element: #HTMLElement) = Bindings.userEvent.unhover(element)
+    //     /// Uploads a file to an <input>. 
+    //     static member upload (element: #HTMLElement, file: File, ?clickEventProps: #IMouseEventProperty list, ?changeEventProps: #IEventProperty list, ?applyAccept: bool) =
+    //         Bindings.userEvent.upload (
+    //             element, 
+    //             file, 
+    //             ?eventOptions = Bindings.createUploadEventInit clickEventProps changeEventProps, 
+    //             ?options = Option.map (fun b -> createObj !![ "applyAccept" ==> b ]) applyAccept
+    //         )
+    //     /// Uploads a file to an <input>. 
+    //     ///
+    //     /// For uploading multiple files use <input> with the multiple attribute.
+    //     static member upload (element: #HTMLElement, files: seq<File>, ?clickEventProps: #IMouseEventProperty list, ?changeEventProps: #IEventProperty list, ?applyAccept: bool) =
+    //         Bindings.userEvent.upload (
+    //             element, 
+    //             ResizeArray files, 
+    //             ?eventOptions = Bindings.createUploadEventInit clickEventProps changeEventProps, 
+    //             ?options = Option.map (fun b -> createObj !![ "applyAccept" ==> b ]) applyAccept
+    //         )
 
 [<AutoOpen>]
 module RTLExtensions =
@@ -903,91 +904,91 @@ module RTLExtensions =
         member _.waiting (?eventProperties: #IEventProperty list) = Bindings.fireEvent.waiting(element, ?eventProperties = (eventProperties |> Option.map (fun props -> createObj !!props)))
         member _.wheel (?eventProperties: #IMouseEventProperty list) = Bindings.fireEvent.wheel(element, ?eventProperties = (eventProperties |> Option.map (fun props -> createObj !!props)))
 
-    [<NoComparison>]
-    [<NoEquality>]
-    type HTMLElementUserEvent (element: HTMLElement) =
-        /// Selects the text inside an input or textarea and deletes it.
-        member _.clear () = RTL.userEvent.clear(element)
-        /// Clicks element, depending on what element is it can have different side effects.
-        member _.click (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
-            RTL.userEvent.click(element, ?clickCount = clickCount, ?skipHover = skipHover, ?eventProperties = eventProperties)
-        /// Cntrl + clicks element, depending on what element is it can have different side effects.
-        member _.ctrlClick (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
-            RTL.userEvent.ctrlClick(element, ?clickCount = clickCount, ?skipHover = skipHover, ?eventProperties = eventProperties)
-        /// Clicks element twice, depending on what element is it can have different side effects.
-        member _.dblClick (?eventProperties: #IMouseEventProperty list) =
-            RTL.userEvent.dblClick(element, ?eventProperties = eventProperties)
-        /// Remove the selection for the specified option(s) of a <select multiple> element.
-        member _.deselectOptions (values: 'T []) = RTL.userEvent.deselectOptions(element, values)
-        /// Remove the selection for the specified option(s) of a <select multiple> element.
-        member _.deselectOptions (values: 'T list) = RTL.userEvent.deselectOptions(element, values)
-        /// Remove the selection for the specified option(s) of a <select multiple> element.
-        member _.deselectOptions (values: ResizeArray<'T>) = RTL.userEvent.deselectOptions(element, values)
-        /// Hovers over the element.
-        member _.hover () = RTL.userEvent.hover(element)
-        /// Selects the specified option(s) of a <select> or a <select multiple> element.
-        member _.selectOptions (values: 'T []) = RTL.userEvent.selectOptions(element, values)
-        /// Selects the specified option(s) of a <select> or a <select multiple> element.
-        member _.selectOptions (values: 'T list) = RTL.userEvent.selectOptions(element, values)
-        /// Selects the specified option(s) of a <select> or a <select multiple> element.
-        member _.selectOptions (values: ResizeArray<'T>) = RTL.userEvent.selectOptions(element, values)
-        /// Shift + clicks element, depending on what element is it can have different side effects.
-        member _.shiftClick (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
-            RTL.userEvent.shiftClick(element, ?clickCount = clickCount, ?skipHover = skipHover, ?eventProperties = eventProperties)
-        /// Cntrl + shift + clicks element, depending on what element is it can have different side effects.
-        member _.shiftCtrlClick (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
-            RTL.userEvent.shiftCtrlClick(element, ?clickCount = clickCount, ?skipHover = skipHover, ?eventProperties = eventProperties)
-        /// Fires a tab event changing the document.activeElement in the same way the browser does.
-        member _.tab (?shift: bool) = RTL.userEvent.tab(?shift = shift, ?focusTrap = Some element)
-        /// Writes text inside an <input> or a <textarea>.
-        ///
-        /// You can use special characters via brackets such as {enter}, supported keys:
-        /// enter, esc, backspace, shift, ctrl, alt, meta
-        ///
-        /// shift, ctrl, alt, and meta will activate their respective event key. Which is 
-        /// ended with a closing tag: {/shift}, {/ctrl}, {/alt}, and {/meta}.
-        ///
-        /// shift does *not* cause lowercase text to become uppercase.
-        member _.type' (text: string, ?skipClick: bool, ?skipAutoClose: bool, ?initialSelectionStart: int, ?initialSelectionEnd: int) = 
-            RTL.userEvent.type' (
-                element, 
-                text,
-                ?skipClick = skipClick,
-                ?skipAutoClose = skipAutoClose,
-                ?initialSelectionStart = initialSelectionStart,
-                ?initialSelectionEnd = initialSelectionEnd
-            )
-        /// Writes text inside an <input> or a <textarea>.
-        ///
-        /// You can use special characters via brackets such as {enter}, supported keys:
-        /// enter, esc, backspace, shift, ctrl, alt, meta
-        ///
-        /// shift, ctrl, alt, and meta will activate their respective event key. Which is 
-        /// ended with a closing tag: {/shift}, {/ctrl}, {/alt}, and {/meta}.
-        ///
-        /// shift does *not* cause lowercase text to become uppercase.
-        member _.type' (text: string, delayMS: int, ?skipClick: bool, ?skipAutoClose: bool, ?initialSelectionStart: int, ?initialSelectionEnd: int) = 
-            RTL.userEvent.type' (
-                element, 
-                text,
-                delayMS,
-                ?skipClick = skipClick,
-                ?skipAutoClose = skipAutoClose,
-                ?initialSelectionStart = initialSelectionStart,
-                ?initialSelectionEnd = initialSelectionEnd
-            )
-        /// Unhovers the element.
-        member _.unhover () = RTL.userEvent.unhover(element)
-        /// Uploads a file to an <input>. 
-        member _.upload (file: File, ?clickEventProps: #IMouseEventProperty list, ?changeEventProps: #IEventProperty list) =
-            RTL.userEvent.upload(element, file, ?clickEventProps = clickEventProps, ?changeEventProps = changeEventProps)
-        /// Uploads a file to an <input>. 
-        ///
-        /// For uploading multiple files use <input> with the multiple attribute.
-        member _.upload (files: seq<File>, ?clickEventProps: #IMouseEventProperty list, ?changeEventProps: #IEventProperty list) =
-            RTL.userEvent.upload(element, ResizeArray files, ?clickEventProps = clickEventProps, ?changeEventProps = changeEventProps)
-
-    type Browser.Types.HTMLElement with
-        member this.createEvent = HTMLElementCreateEvent(this)
-        member this.fireEvent = HTMLElementFireEvent(this)
-        member this.userEvent = HTMLElementUserEvent(this)
+    // [<NoComparison>]
+    // [<NoEquality>]
+    // type HTMLElementUserEvent (element: HTMLElement) =
+    //     /// Selects the text inside an input or textarea and deletes it.
+    //     member _.clear () = RTL.userEvent.clear(element)
+    //     /// Clicks element, depending on what element is it can have different side effects.
+    //     member _.click (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
+    //         RTL.userEvent.click(element, ?clickCount = clickCount, ?skipHover = skipHover, ?eventProperties = eventProperties)
+    //     /// Cntrl + clicks element, depending on what element is it can have different side effects.
+    //     member _.ctrlClick (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
+    //         RTL.userEvent.ctrlClick(element, ?clickCount = clickCount, ?skipHover = skipHover, ?eventProperties = eventProperties)
+    //     /// Clicks element twice, depending on what element is it can have different side effects.
+    //     member _.dblClick (?eventProperties: #IMouseEventProperty list) =
+    //         RTL.userEvent.dblClick(element, ?eventProperties = eventProperties)
+    //     /// Remove the selection for the specified option(s) of a <select multiple> element.
+    //     member _.deselectOptions (values: 'T []) = RTL.userEvent.deselectOptions(element, values)
+    //     /// Remove the selection for the specified option(s) of a <select multiple> element.
+    //     member _.deselectOptions (values: 'T list) = RTL.userEvent.deselectOptions(element, values)
+    //     /// Remove the selection for the specified option(s) of a <select multiple> element.
+    //     member _.deselectOptions (values: ResizeArray<'T>) = RTL.userEvent.deselectOptions(element, values)
+    //     /// Hovers over the element.
+    //     member _.hover () = RTL.userEvent.hover(element)
+    //     /// Selects the specified option(s) of a <select> or a <select multiple> element.
+    //     member _.selectOptions (values: 'T []) = RTL.userEvent.selectOptions(element, values)
+    //     /// Selects the specified option(s) of a <select> or a <select multiple> element.
+    //     member _.selectOptions (values: 'T list) = RTL.userEvent.selectOptions(element, values)
+    //     /// Selects the specified option(s) of a <select> or a <select multiple> element.
+    //     member _.selectOptions (values: ResizeArray<'T>) = RTL.userEvent.selectOptions(element, values)
+    //     /// Shift + clicks element, depending on what element is it can have different side effects.
+    //     member _.shiftClick (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
+    //         RTL.userEvent.shiftClick(element, ?clickCount = clickCount, ?skipHover = skipHover, ?eventProperties = eventProperties)
+    //     /// Cntrl + shift + clicks element, depending on what element is it can have different side effects.
+    //     member _.shiftCtrlClick (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
+    //         RTL.userEvent.shiftCtrlClick(element, ?clickCount = clickCount, ?skipHover = skipHover, ?eventProperties = eventProperties)
+    //     /// Fires a tab event changing the document.activeElement in the same way the browser does.
+    //     member _.tab (?shift: bool) = RTL.userEvent.tab(?shift = shift, ?focusTrap = Some element)
+    //     /// Writes text inside an <input> or a <textarea>.
+    //     ///
+    //     /// You can use special characters via brackets such as {enter}, supported keys:
+    //     /// enter, esc, backspace, shift, ctrl, alt, meta
+    //     ///
+    //     /// shift, ctrl, alt, and meta will activate their respective event key. Which is 
+    //     /// ended with a closing tag: {/shift}, {/ctrl}, {/alt}, and {/meta}.
+    //     ///
+    //     /// shift does *not* cause lowercase text to become uppercase.
+    //     member _.type' (text: string, ?skipClick: bool, ?skipAutoClose: bool, ?initialSelectionStart: int, ?initialSelectionEnd: int) = 
+    //         RTL.userEvent.type' (
+    //             element, 
+    //             text,
+    //             ?skipClick = skipClick,
+    //             ?skipAutoClose = skipAutoClose,
+    //             ?initialSelectionStart = initialSelectionStart,
+    //             ?initialSelectionEnd = initialSelectionEnd
+    //         )
+    //     /// Writes text inside an <input> or a <textarea>.
+    //     ///
+    //     /// You can use special characters via brackets such as {enter}, supported keys:
+    //     /// enter, esc, backspace, shift, ctrl, alt, meta
+    //     ///
+    //     /// shift, ctrl, alt, and meta will activate their respective event key. Which is 
+    //     /// ended with a closing tag: {/shift}, {/ctrl}, {/alt}, and {/meta}.
+    //     ///
+    //     /// shift does *not* cause lowercase text to become uppercase.
+    //     member _.type' (text: string, delayMS: int, ?skipClick: bool, ?skipAutoClose: bool, ?initialSelectionStart: int, ?initialSelectionEnd: int) = 
+    //         RTL.userEvent.type' (
+    //             element, 
+    //             text,
+    //             delayMS,
+    //             ?skipClick = skipClick,
+    //             ?skipAutoClose = skipAutoClose,
+    //             ?initialSelectionStart = initialSelectionStart,
+    //             ?initialSelectionEnd = initialSelectionEnd
+    //         )
+    //     /// Unhovers the element.
+    //     member _.unhover () = RTL.userEvent.unhover(element)
+    //     /// Uploads a file to an <input>. 
+    //     member _.upload (file: File, ?clickEventProps: #IMouseEventProperty list, ?changeEventProps: #IEventProperty list) =
+    //         RTL.userEvent.upload(element, file, ?clickEventProps = clickEventProps, ?changeEventProps = changeEventProps)
+    //     /// Uploads a file to an <input>. 
+    //     ///
+    //     /// For uploading multiple files use <input> with the multiple attribute.
+    //     member _.upload (files: seq<File>, ?clickEventProps: #IMouseEventProperty list, ?changeEventProps: #IEventProperty list) =
+    //         RTL.userEvent.upload(element, ResizeArray files, ?clickEventProps = clickEventProps, ?changeEventProps = changeEventProps)
+    //
+    // type Browser.Types.HTMLElement with
+    //     member this.createEvent = HTMLElementCreateEvent(this)
+    //     member this.fireEvent = HTMLElementFireEvent(this)
+    //     member this.userEvent = HTMLElementUserEvent(this)

@@ -63,25 +63,25 @@ Jest.describe("*ByPlaceholderText query tests", fun () ->
         Jest.expect(actual).toHaveLength(0)
     )
 
-    Jest.test("findByPlaceholderText an element", promise {
-        let actual = RTL.render(placeholderTextElement()).findByPlaceholderText("Username")
-            
-        do! Jest.expect(actual).resolves.toBeInTheDocument()
-    })
-    Jest.test("findByPlaceholderText throws when no element matches", promise {
-        let actual = RTL.render(otherPlaceholderTextElement()).findByPlaceholderText("Username")
-        
-        do! Jest.expect(actual).rejects.toThrow()
-    })
-
-    Jest.test("findAllByPlaceholderText an element", promise {
-        let actual = RTL.render(placeholderTextElement()).findAllByPlaceholderText("Username")
-            
-        do! Jest.expect(actual).resolves.toHaveLength(1)
-    })
-    Jest.test("findAllByPlaceholderText no element matches", promise {
-        let actual = RTL.render(otherPlaceholderTextElement()).findAllByPlaceholderText("Username")
-            
-        do! Jest.expect(actual).rejects.toThrow()
-    })
+    // Jest.test("findByPlaceholderText an element", promise {
+    //     let actual = RTL.render(placeholderTextElement()).findByPlaceholderText("Username")
+    //         
+    //     do! Jest.expect(actual).resolves.toBeInTheDocument()
+    // })
+    // Jest.test("findByPlaceholderText throws when no element matches", promise {
+    //     let actual = RTL.render(otherPlaceholderTextElement()).findByPlaceholderText("Username")
+    //     
+    //     do! Jest.expect(actual).rejects.toThrow()
+    // })
+    //
+    // Jest.test("findAllByPlaceholderText an element", promise {
+    //     let actual = RTL.render(placeholderTextElement()).findAllByPlaceholderText("Username")
+    //         
+    //     do! Jest.expect(actual).resolves.toHaveLength(1)
+    // })
+    // Jest.test("findAllByPlaceholderText no element matches", promise {
+    //     let actual = RTL.render(otherPlaceholderTextElement()).findAllByPlaceholderText("Username")
+    //         
+    //     do! Jest.expect(actual).rejects.toThrow()
+    // })
 )

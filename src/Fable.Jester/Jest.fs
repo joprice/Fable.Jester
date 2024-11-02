@@ -214,7 +214,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member expect (value: Async<'a []>) = 
-        importSideEffects "@testing-library/jest-dom"
         Jest.expect(Async.StartAsPromise(value)).resolves
     /// The expect function is used every time you want to test a value.
     ///
@@ -223,7 +222,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member expect (value: Async<'a list>) = 
-        importSideEffects "@testing-library/jest-dom"
         Jest.expect(Async.StartAsPromise(value)).resolves
     /// The expect function is used every time you want to test a value.
     ///
@@ -232,7 +230,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member expect (value: Async<'a seq>) = 
-        importSideEffects "@testing-library/jest-dom"
         Jest.expect(Async.StartAsPromise(value)).resolves
     /// The expect function is used every time you want to test a value.
     ///
@@ -241,7 +238,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member inline expect (value: HTMLElement) : expectedHtml<unit> = 
-        importSideEffects "@testing-library/jest-dom"
         JestInternal.expectHtml(value)
     /// The expect function is used every time you want to test a value.
     ///
@@ -250,7 +246,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member inline expect (value: HTMLElement option) : expectedHtml<unit> = 
-        importSideEffects "@testing-library/jest-dom"
         JestInternal.expectHtml(value)
     /// The expect function is used every time you want to test a value.
     ///
@@ -259,7 +254,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member inline expect (value: JS.Promise<HTMLElement>) : expectedHtmlPromise =
-        importSideEffects "@testing-library/jest-dom"
         JestInternal.expectHtmlPromise(value)
     /// The expect function is used every time you want to test a value.
     ///
@@ -268,7 +262,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member inline expect (value: Async<HTMLElement>) = 
-        importSideEffects "@testing-library/jest-dom"
         Jest.expect(Async.StartAsPromise value).resolves
     /// The expect function is used every time you want to test a value.
     ///
@@ -277,7 +270,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member inline expect (value: Node) : expectedHtml<unit> =
-        importSideEffects "@testing-library/jest-dom"
         JestInternal.expectHtml(value)
     /// The expect function is used every time you want to test a value.
     ///
@@ -286,7 +278,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member inline expect (value: Node option) : expectedHtml<unit> =
-        importSideEffects "@testing-library/jest-dom"
         JestInternal.expectHtml(value)
     /// The expect function is used every time you want to test a value.
     ///
@@ -295,7 +286,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member inline expect (value: JS.Promise<Node>) : expectedHtmlPromise =
-        importSideEffects "@testing-library/jest-dom"
         JestInternal.expectHtmlPromise(value)
     /// The expect function is used every time you want to test a value.
     ///
@@ -304,7 +294,6 @@ type Jest =
     /// mix them up, your tests will still work, but the error messages on 
     /// failing tests will look strange.
     static member inline expect (value: Async<Node>) = 
-        importSideEffects "@testing-library/jest-dom"
         Jest.expect(Async.StartAsPromise value).resolves
     /// The expect function is used every time you want to test a value.
     ///
@@ -579,9 +568,9 @@ module Jest =
 [<AutoOpen>]
 module JestExtensions =
     type AsyncBuilder with
-        member this.Bind (computation: JS.Promise<unit>, f: unit -> Async<unit>) = 
+        member inline this.Bind (computation: JS.Promise<unit>, f: unit -> Async<unit>) = 
             this.Bind((Async.AwaitPromise computation), f)
-        member this.ReturnFrom (computation: JS.Promise<unit>) = 
+        member inline this.ReturnFrom (computation: JS.Promise<unit>) = 
             this.ReturnFrom(computation |> Async.AwaitPromise)
 
     type Jest with
@@ -617,10 +606,10 @@ module JestExtensions =
         /// Runs a test.
         ///
         /// The default timeout is 5 seconds.
-        [<Emit("test($0, async () => { await $1 }, $2)")>]
-        static member test (name: string, prom: JS.Promise<unit>, ?timeout: int) : unit = jsNative
+        [<Global>]
+        static member test (name: string, prom: unit -> JS.Promise<unit>, ?timeout: int) : unit = jsNative
         /// Runs a test.
         ///
         /// The default timeout is 5 seconds.
         static member inline test (name: string, asnc: Async<unit>, ?timeout: int) : unit =
-            Jest.test(name, Async.StartAsPromise asnc, ?timeout = timeout)
+            Jest.test(name, (fun ()-> Async.StartAsPromise asnc), ?timeout = timeout)

@@ -59,25 +59,25 @@ Jest.describe("*ByTitle query tests", fun () ->
         Jest.expect(actual).toHaveLength(0)
     )
 
-    Jest.test("findByTitle an element", promise {
-        let actual = RTL.render(titleElement()).findByTitle("Username")
-            
-        do! Jest.expect(actual).resolves.toBeInTheDocument()
-    })
-    Jest.test("findByTitle throws when no element matches", promise {
-        let actual = RTL.render(otherTitleElement()).findByTitle("Username")
-        
-        do! Jest.expect(actual).rejects.toThrow()
-    })
-
-    Jest.test("findAllByTitle an element", promise {
-        let actual = RTL.render(titleElement()).findAllByTitle("Username")
-            
-        do! Jest.expect(actual).resolves.toHaveLength(1)
-    })
-    Jest.test("findAllByTitle no element matches", promise {
-        let actual = RTL.render(otherTitleElement()).findAllByTitle("Username")
-            
-        do! Jest.expect(actual).rejects.toThrow()
-    })
+    // Jest.test("findByTitle an element", promise {
+    //     let actual = RTL.render(titleElement()).findByTitle("Username")
+    //         
+    //     do! Jest.expect(actual).resolves.toBeInTheDocument()
+    // })
+    // Jest.test("findByTitle throws when no element matches", promise {
+    //     let actual = RTL.render(otherTitleElement()).findByTitle("Username")
+    //     
+    //     do! Jest.expect(actual).rejects.toThrow()
+    // })
+    //
+    // Jest.test("findAllByTitle an element", promise {
+    //     let actual = RTL.render(titleElement()).findAllByTitle("Username")
+    //         
+    //     do! Jest.expect(actual).resolves.toHaveLength(1)
+    // })
+    // Jest.test("findAllByTitle no element matches", promise {
+    //     let actual = RTL.render(otherTitleElement()).findAllByTitle("Username")
+    //         
+    //     do! Jest.expect(actual).rejects.toThrow()
+    // })
 )

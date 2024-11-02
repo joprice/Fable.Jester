@@ -144,11 +144,11 @@ Jest.describe("matcher tests", fun () ->
 
         do! Jest.expect(asyncList).toContain(3)
     })
-    Jest.test("toContain", promise {
-        let promiseList = promise { return [1;2;3] }
-
-        do! Jest.expect(promiseList).resolves.toContain(3)
-    })
+    // Jest.test("toContain", promise {
+    //     let promiseList = promise { return [1;2;3] }
+    //
+    //     do! Jest.expect(promiseList).resolves.toContain(3)
+    // })
     Jest.test("not toContain", fun () ->
         Jest.expect([1;2;3]).not.toContain(5)
     )

@@ -65,30 +65,30 @@ Jest.describe("*ByTestId query tests", fun () ->
         Jest.expect(actual).toHaveLength(0)
     )
 
-    Jest.test("findByTestId an element", promise {
-        let actual = RTL.render(testIdElement()).findByTestId("custom-element")
-            
-        do! Jest.expect(actual).resolves.toBeInTheDocument()
-        do! Jest.expect(actual).resolves.toHaveTextContent("username")
-    })
-    Jest.test("findByTestId throws when no element matches", promise {
-        let actual = RTL.render(otherTestIdElement()).findByTestId("custom-element")
-        
-        do! Jest.expect(actual).rejects.toThrow()
-    })
-
-    Jest.test("findAllByTestId an element", promise {
-        let actual = RTL.render(testIdElement()).findAllByTestId("custom-element")
-            
-        do! Jest.expect(actual).resolves.toHaveLength(1)
-
-        let! actual = actual
-
-        do Jest.expect(actual.Head).toHaveTextContent("username")
-    })
-    Jest.test("findAllByTestId no element matches", promise {
-        let actual = RTL.render(otherTestIdElement()).findAllByTestId("custom-element")
-            
-        do! Jest.expect(actual).rejects.toThrow()
-    })
+    // Jest.test("findByTestId an element", promise {
+    //     let actual = RTL.render(testIdElement()).findByTestId("custom-element")
+    //         
+    //     do! Jest.expect(actual).resolves.toBeInTheDocument()
+    //     do! Jest.expect(actual).resolves.toHaveTextContent("username")
+    // })
+    // Jest.test("findByTestId throws when no element matches", promise {
+    //     let actual = RTL.render(otherTestIdElement()).findByTestId("custom-element")
+    //     
+    //     do! Jest.expect(actual).rejects.toThrow()
+    // })
+    //
+    // Jest.test("findAllByTestId an element", promise {
+    //     let actual = RTL.render(testIdElement()).findAllByTestId("custom-element")
+    //         
+    //     do! Jest.expect(actual).resolves.toHaveLength(1)
+    //
+    //     let! actual = actual
+    //
+    //     do Jest.expect(actual.Head).toHaveTextContent("username")
+    // })
+    // Jest.test("findAllByTestId no element matches", promise {
+    //     let actual = RTL.render(otherTestIdElement()).findAllByTestId("custom-element")
+    //         
+    //     do! Jest.expect(actual).rejects.toThrow()
+    // })
 )

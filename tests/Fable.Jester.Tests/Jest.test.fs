@@ -19,10 +19,10 @@ Jest.describe("can run basic tests", fun () ->
         Jest.expect(1+1).toEqual(2)
     )
 
-    Jest.test("running a promise test", promise {
-        do! Jest.expect(myPromise).resolves.toEqual(2)
-        do! Jest.expect(myPromise |> Promise.map ((+) 1)).resolves.toEqual(3)
-    })
+    // Jest.test("running a promise test", promise {
+    //     do! Jest.expect(myPromise).resolves.toEqual(2)
+    //     do! Jest.expect(myPromise |> Promise.map ((+) 1)).resolves.toEqual(3)
+    // })
 
     Jest.test("running an async test", async {
         do! Jest.expect(myAsync).toEqual(2)

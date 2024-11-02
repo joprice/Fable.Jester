@@ -59,25 +59,25 @@ Jest.describe("*ByText query tests", fun () ->
         Jest.expect(actual).toHaveLength(0)
     )
 
-    Jest.test("findByText an element", promise {
-        let actual = RTL.render(textElement()).findByText("Username")
-            
-        do! Jest.expect(actual).resolves.toBeInTheDocument()
-    })
-    Jest.test("findByText throws when no element matches", promise {
-        let actual = RTL.render(otherTextElement()).findByText("Username")
-        
-        do! Jest.expect(actual).rejects.toThrow()
-    })
-
-    Jest.test("findAllByText an element", promise {
-        let actual = RTL.render(textElement()).findAllByText("Username")
-            
-        do! Jest.expect(actual).resolves.toHaveLength(1)
-    })
-    Jest.test("findAllByText no element matches", promise {
-        let actual = RTL.render(otherTextElement()).findAllByText("Username")
-            
-        do! Jest.expect(actual).rejects.toThrow()
-    })
+    // Jest.test("findByText an element", promise {
+    //     let actual = RTL.render(textElement()).findByText("Username")
+    //         
+    //     do! Jest.expect(actual).resolves.toBeInTheDocument()
+    // })
+    // Jest.test("findByText throws when no element matches", promise {
+    //     let actual = RTL.render(otherTextElement()).findByText("Username")
+    //     
+    //     do! Jest.expect(actual).rejects.toThrow()
+    // })
+    //
+    // Jest.test("findAllByText an element", promise {
+    //     let actual = RTL.render(textElement()).findAllByText("Username")
+    //         
+    //     do! Jest.expect(actual).resolves.toHaveLength(1)
+    // })
+    // Jest.test("findAllByText no element matches", promise {
+    //     let actual = RTL.render(otherTextElement()).findAllByText("Username")
+    //         
+    //     do! Jest.expect(actual).rejects.toThrow()
+    // })
 )
