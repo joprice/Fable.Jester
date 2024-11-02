@@ -3790,7 +3790,8 @@ module Bindings =
         [<Emit("$0($1)")>]
         abstract invoke<'BaseElement, 'Container when 'BaseElement :> HTMLElement and 'Container :> HTMLElement> : reactElement:ReactElement * ?options:obj -> Render<'BaseElement,'Container>
 
-    let renderImport : RenderImport = import "render" "@testing-library/react"
+    [<Import("render","@testing-library/react")>]
+    let renderImport : RenderImport = nativeOnly
 
     type render<'BaseElement, 'Container when 'BaseElement :> HTMLElement and 'Container :> HTMLElement> (render: Render<'BaseElement,'Container>) =
         inherit queriesForElement(render)
@@ -3904,32 +3905,32 @@ module Bindings =
         | None, Some changeProps -> {| changeInit = createObj !!changeProps |} |> toPlainJsObj |> Some
         | None, None -> None
 
-    // type UserEventImport =
-    //     abstract clear: element:#HTMLElement -> unit
-    //     abstract click: element:#HTMLElement * ?eventInit:obj * ?options:obj -> unit
-    //     abstract dblClick: element:#HTMLElement * ?eventInit:obj -> unit
-    //     [<Emit("$0.deselectOptions($1, Array.from($2))")>]
-    //     abstract deselectOptions: element:#HTMLElement * values:'T [] -> unit
-    //     [<Emit("$0.deselectOptions($1, Array.from($2))")>]
-    //     abstract deselectOptions: element:#HTMLElement * values:'T list -> unit
-    //     abstract deselectOptions: element:#HTMLElement * values:ResizeArray<'T> -> unit
-    //     abstract hover: element:#HTMLElement -> unit
-    //     abstract keyboard: text:string * ?options: obj -> KeyboardState
-    //     abstract paste: element:#HTMLElement * text:string * ?eventInit:obj * ?options:obj -> unit
-    //     [<Emit("$0.selectOptions($1, Array.from($2))")>]
-    //     abstract selectOptions: element:#HTMLElement * values:'T [] -> unit
-    //     [<Emit("$0.selectOptions($1, Array.from($2))")>]
-    //     abstract selectOptions: element:#HTMLElement * values:'T list -> unit
-    //     abstract selectOptions: element:#HTMLElement * values:ResizeArray<'T> -> unit
-    //     abstract tab: ?options:obj -> unit
-    //     [<Emit("$0.type($1...)")>]
-    //     abstract typeInternal: #HTMLElement * string * ?options: obj -> unit
-    //     abstract unhover: #HTMLElement -> unit
-    //     abstract upload: #HTMLElement * Browser.Types.File * ?eventOptions: obj * ?options: obj -> unit
-    //     abstract upload: #HTMLElement * ResizeArray<Browser.Types.File> * ?eventOptions: obj * ?options: obj -> unit
-    //
-    // [<ImportDefault("@testing-library/user-event")>]
-    // let userEvent : UserEventImport = nativeOnly
+    type UserEventImport =
+        abstract clear: element:#HTMLElement -> JS.Promise<unit>
+        abstract click: element:#HTMLElement * ?eventInit:obj * ?options:obj -> JS.Promise<unit>
+        abstract dblClick: element:#HTMLElement * ?eventInit:obj -> JS.Promise<unit>
+        [<Emit("$0.deselectOptions($1, Array.from($2))")>]
+        abstract deselectOptions: element:#HTMLElement * values:'T [] -> JS.Promise<unit>
+        [<Emit("$0.deselectOptions($1, Array.from($2))")>]
+        abstract deselectOptions: element:#HTMLElement * values:'T list -> JS.Promise<unit>
+        abstract deselectOptions: element:#HTMLElement * values:ResizeArray<'T> -> JS.Promise<unit>
+        abstract hover: element:#HTMLElement -> JS.Promise<unit>
+        abstract keyboard: text:string * ?options: obj -> JS.Promise<unit>
+        abstract paste: element:#HTMLElement * text:string * ?eventInit:obj * ?options:obj -> JS.Promise<unit>
+        [<Emit("$0.selectOptions($1, Array.from($2))")>]
+        abstract selectOptions: element:#HTMLElement * values:'T [] -> JS.Promise<unit>
+        [<Emit("$0.selectOptions($1, Array.from($2))")>]
+        abstract selectOptions: element:#HTMLElement * values:'T list -> JS.Promise<unit>
+        abstract selectOptions: element:#HTMLElement * values:ResizeArray<'T> -> JS.Promise<unit>
+        abstract tab: ?options:obj -> JS.Promise<unit>
+        [<Emit("$0.type($1...)")>]
+        abstract typeInternal: #HTMLElement * string * ?options: obj -> JS.Promise<unit>
+        abstract unhover: #HTMLElement -> JS.Promise<unit>
+        abstract upload: #HTMLElement * Browser.Types.File * ?eventOptions: obj * ?options: obj -> JS.Promise<unit>
+        abstract upload: #HTMLElement * ResizeArray<Browser.Types.File> * ?eventOptions: obj * ?options: obj -> JS.Promise<unit>
+
+    [<ImportDefault("@testing-library/user-event")>]
+    let userEvent : UserEventImport = nativeOnly
 
     type WaitFor =
         [<Emit("$0($1)")>]

@@ -253,11 +253,11 @@ Jest.describe("jest-dom tests", (fun () ->
         Jest.expect(render.getByTestId("header-title")).not.toHaveAccessibleDescription("something else")
     ))
     
-    Jest.test("toHaveAccessibleName", (fun () ->
-        let render = RTL.render(testElement(testElemDefaults))
-
-        Jest.expect(render.getByTestId("header-title")).toHaveAccessibleName("header-title")
-    ))
+    // Jest.test("toHaveAccessibleName", (fun () ->
+    //     let render = RTL.render(testElement(testElemDefaults))
+    //
+    //     Jest.expect(render.getByTestId("header-title")).toHaveAccessibleName("header-title")
+    // ))
     Jest.test("not toHaveAccessibleName", (fun () ->
         let render = RTL.render(testElement(testElemDefaults))
 

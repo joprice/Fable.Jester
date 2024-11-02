@@ -512,7 +512,7 @@ type Jest =
     /// Instructs Jest to use fake versions of the standard timer 
     /// functions (setTimeout, setInterval, clearTimeout, 
     /// clearInterval, nextTick, setImmediate and clearImmediate).
-    [<Emit("jest.useFakeTimers('modern')")>]
+    [<Import("jest.useFakeTimers", "@jest/globals")>]
     static member useFakeTimers () : unit = jsNative
 
 [<RequireQualifiedAccess>]

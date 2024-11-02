@@ -1,5 +1,6 @@
 ﻿module WaitTests
 
+open Fable.Core
 open Fable.Jester
 open Fable.ReactTestingLibrary
 open Feliz
@@ -36,7 +37,9 @@ Jest.describe("Wait tests", fun () ->
         Jest.expect(render.queryByTestId("wait-true").IsNone).toBe(true)
         Jest.expect(render.queryByTestId("wait-true2").IsNone).toBe(true)
 
-        render.getByTestId("wait-button").click()
+        RTL.act(fun () -> 
+            render.getByTestId("wait-button").click()
+        )
 
         do! RTL.waitFor(fun () -> Jest.expect(render.queryByTestId("wait-false")).not.toBeInTheDocument())
 
@@ -48,13 +51,15 @@ Jest.describe("Wait tests", fun () ->
     
     Jest.test("waitFor correctly waits for condition to satisfy from a promise", async {
         let render = RTL.render(waitElement())
-        
+
         Jest.expect(render.queryByTestId("wait-false").IsSome).toBe(true)
         Jest.expect(render.queryByTestId("wait-false2").IsSome).toBe(true)
         Jest.expect(render.queryByTestId("wait-true").IsNone).toBe(true)
         Jest.expect(render.queryByTestId("wait-true2").IsNone).toBe(true)
 
-        render.getByTestId("wait-button").click()
+        RTL.act(fun () -> 
+            render.getByTestId("wait-button").click()
+        )
 
         do! RTL.waitFor(fun () -> promise {
                 return Jest.expect(render.queryByTestId("wait-false")).not.toBeInTheDocument()
@@ -65,16 +70,18 @@ Jest.describe("Wait tests", fun () ->
         Jest.expect(render.queryByTestId("wait-true").IsSome).toBe(true)
         Jest.expect(render.queryByTestId("wait-true2").IsSome).toBe(true)
     })
-    
+
     Jest.test("waitFor correctly waits for condition to satisfy from an async computation", async {
         let render = RTL.render(waitElement())
-        
+
         Jest.expect(render.queryByTestId("wait-false").IsSome).toBe(true)
         Jest.expect(render.queryByTestId("wait-false2").IsSome).toBe(true)
         Jest.expect(render.queryByTestId("wait-true").IsNone).toBe(true)
         Jest.expect(render.queryByTestId("wait-true2").IsNone).toBe(true)
 
-        render.getByTestId("wait-button").click()
+        RTL.act(fun () -> 
+            render.getByTestId("wait-button").click()
+        )
 
         do! RTL.waitFor(async {
                 return Jest.expect(render.queryByTestId("wait-false")).not.toBeInTheDocument()
@@ -88,7 +95,7 @@ Jest.describe("Wait tests", fun () ->
 
     Jest.test("waitForElementToBeRemoved correctly waits for element callback to be removed", async {
         let render = RTL.render(waitElement())
-        
+
         let clickButton () =
             async {
                 do! Async.Sleep 1000
@@ -111,11 +118,11 @@ Jest.describe("Wait tests", fun () ->
 
     Jest.test("waitForElementToBeRemoved correctly waits for element list callback to be removed", async {
         let render = RTL.render(waitElement())
-        
+
         let clickButton () =
             async {
                 do! Async.Sleep 1000
-                do render.getByTestId("wait-button").click()
+                render.getByTestId("wait-button").click()
             }
 
         Jest.expect(render.queryByTestId("wait-false").IsSome).toBe(true)
