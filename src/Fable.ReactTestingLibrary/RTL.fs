@@ -910,7 +910,7 @@ module RTLExtensions =
         /// Selects the text inside an input or textarea and deletes it.
         member _.clear () = RTL.userEvent.clear(element)
         /// Clicks element, depending on what element is it can have different side effects.
-        member inline _.click (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
+        member _.click (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
             RTL.userEvent.click(element, ?clickCount = clickCount, ?skipHover = skipHover, ?eventProperties = eventProperties)
         /// Cntrl + clicks element, depending on what element is it can have different side effects.
         member _.ctrlClick (?clickCount: int, ?skipHover: bool, ?eventProperties: #IMouseEventProperty list) =
