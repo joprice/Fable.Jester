@@ -118,12 +118,12 @@ type RTL =
     static member inline waitFor (callback: unit -> unit, waitForOptions: IWaitOption list) = 
         Bindings.waitForImport.invoke(callback, unbox<IWaitOptions> (createObj !!waitForOptions))
     /// When in need to wait for any period of time you can use waitFor, to wait for your expectations to pass.
-    static member inline waitFor (promise: JS.Promise<unit>) = Bindings.waitForImport.invoke (fun () -> promise)
+    static member inline waitFor (promise: unit -> JS.Promise<unit>) = Bindings.waitForImport.invoke (promise)
     /// When in need to wait for any period of time you can use waitFor, to wait for your expectations to pass.
     static member inline waitFor (promise: JS.Promise<unit>, waitForOptions: IWaitOption list) = 
         Bindings.waitForImport.invoke((fun () -> promise), unbox<IWaitOptions> (createObj !!waitForOptions))
     /// When in need to wait for any period of time you can use waitFor, to wait for your expectations to pass.
-    static member inline waitFor (promise: Async<unit>) = RTL.waitFor(Async.StartAsPromise promise)
+    static member inline waitFor (promise: Async<unit>) = RTL.waitFor(fun() -> Async.StartAsPromise promise)
     /// When in need to wait for any period of time you can use waitFor, to wait for your expectations to pass.
     static member inline waitFor (promise: Async<unit>, waitForOptions: IWaitOption list) = RTL.waitFor(Async.StartAsPromise promise, waitForOptions)
         

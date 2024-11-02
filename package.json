@@ -15,9 +15,9 @@
   "scripts": {
     "build": "webpack -p",
     "pretest": "yarn pretest-fc && yarn pretest-jest && yarn pretest-rtl",
-    "pretest-fc": "fable-splitter -c tests/Fable.FastCheck.Tests/splitter.config.js",
-    "pretest-jest": "fable-splitter -c tests/Fable.Jester.Tests/splitter.config.js",
-    "pretest-rtl": "fable-splitter -c tests/Fable.ReactTestingLibrary.Tests/splitter.config.js",
+    "pretest-fc": "dotnet fable tests/Fable.FastCheck.Tests -o dist/tests/FC",
+    "pretest-jest": "dotnet fable tests/Fable.Jester.Tests -o dist/tests/FJ",
+    "pretest-rtl": "dotnet fable tests/Fable.ReactTestingLibrary.Tests -o dist/tests/RTL",
     "publish-docs": "node publish.js",
     "start": "live-server --port=8080 docs/",
     "test": "jest",
@@ -40,8 +40,6 @@
     "@testing-library/user-event": "^13",
     "concurrently": "^5",
     "core-js": "^3",
-    "fable-compiler": "^2",
-    "fable-splitter": "^2",
     "fast-check": "^1",
     "gh-pages": "^3",
     "jest": "^26",
@@ -66,5 +64,6 @@
       "./dist/tests"
     ],
     "testEnvironment": "jsdom"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

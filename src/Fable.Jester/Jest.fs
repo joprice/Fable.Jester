@@ -606,10 +606,10 @@ module JestExtensions =
         /// Runs a test.
         ///
         /// The default timeout is 5 seconds.
-        [<Global>]
-        static member test (name: string, prom: unit -> JS.Promise<unit>, ?timeout: int) : unit = jsNative
+        [<Emit("test($0, async () => { await $1 }, $2)")>]
+        static member test (name: string, prom: JS.Promise<unit>, ?timeout: int) : unit = jsNative
         /// Runs a test.
         ///
         /// The default timeout is 5 seconds.
         static member inline test (name: string, asnc: Async<unit>, ?timeout: int) : unit =
-            Jest.test(name, (fun ()-> Async.StartAsPromise asnc), ?timeout = timeout)
+            Jest.test(name, (Async.StartAsPromise asnc), ?timeout = timeout)

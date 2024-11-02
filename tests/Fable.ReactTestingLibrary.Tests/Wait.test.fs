@@ -56,7 +56,7 @@ Jest.describe("Wait tests", fun () ->
 
         render.getByTestId("wait-button").click()
 
-        do! RTL.waitFor(promise {
+        do! RTL.waitFor(fun () -> promise {
                 return Jest.expect(render.queryByTestId("wait-false")).not.toBeInTheDocument()
             })
 
