@@ -57,8 +57,10 @@ Jest.describe("Wait tests", fun () ->
         Jest.expect(render.queryByTestId("wait-true").IsNone).toBe(true)
         Jest.expect(render.queryByTestId("wait-true2").IsNone).toBe(true)
 
-        RTL.act(fun () -> 
-            render.getByTestId("wait-button").click()
+        do! RTL.act(fun () -> 
+            promise {
+                render.getByTestId("wait-button").click()
+            }
         )
 
         do! RTL.waitFor(fun () -> promise {

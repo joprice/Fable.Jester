@@ -14,8 +14,12 @@ module Bindings =
     
     [<Import("act", "@testing-library/react")>]
     let act : (unit -> unit) -> unit  = nativeOnly
+
     [<Import("act", "@testing-library/react")>]
-    let actAsync(f: unit -> JS.Promise<unit>): JS.Promise<unit> = nativeOnly
+    let actAsyncInner(f: unit -> JS.Promise<unit>): JS.Promise<unit> = nativeOnly
+
+    let actAsync (callback: unit -> JS.Promise<unit> ): JS.Promise<unit> = 
+        (Fable.Core.JsInterop.emitJsExpr (actAsyncInner callback) "async () => { await $0 }") ()
 
     let configure : IConfigureOptions -> unit = import "configure" "@testing-library/react"
 

@@ -11,7 +11,10 @@ type RTL =
     /// This is a light wrapper around the react-dom/test-utils act function. 
     /// All it does is forward all arguments to the act function if your version of react supports act.
     static member inline act (callback: unit -> unit) = Bindings.act callback
-    static member inline act (callback: unit -> JS.Promise<unit> ): JS.Promise<unit> = Bindings.actAsync callback
+    static member inline act (callback: unit -> JS.Promise<unit> ): JS.Promise<unit> = 
+        // let callback = Fable.Core.JsInterop.emitJsExpr callback "async () => { await $0() }"
+        // [<Emit("act(async () => { await $1() })")>]
+        Bindings.actAsync callback
 
     /// Unmounts React trees that were mounted with render.
     static member inline cleanup () = Bindings.cleanup()
